@@ -32,7 +32,7 @@ app.post('/api/donate', jsonParser, async (req, res) => {
         const {blikCode, artist, amount} = req.body;
 
         const artistObj = await db.Artists.findOne({name: artist});
-        if(!artistObj){
+        if (!artistObj) {
             res.send('artist not donated');
             return;
         }
@@ -49,7 +49,7 @@ app.post('/api/donate', jsonParser, async (req, res) => {
         const paymentObject = {
             "currencyCode": "PLN",
             "totalAmount": amount,
-            "description": "TESTąćęłńóśóżźTEST!@#$%^&*()-=TEST_{{$guid}}",
+            "description": `Donation for ${artist.name}`,
             "notifyUrl": "http://test.merch.notifyUrl",
             "customerIp": ip,
             "merchantPosId": "426017",
@@ -69,14 +69,14 @@ app.post('/api/donate', jsonParser, async (req, res) => {
             }
         }
 
-        const response = await axios.post('https://merch-prod.snd.payu.com/api/v2_1/orders', paymentObject, {headers: { Authorization: `Bearer ${access_token}`}});
+        const response = await axios.post('https://merch-prod.snd.payu.com/api/v2_1/orders', paymentObject, {headers: {Authorization: `Bearer ${access_token}`}});
         const resultUpdate = await db.Artists.update({_id: artistObj._id}, {$inc: {donations: 1}}, {multi: true});
         console.log(resultUpdate);
 
-        res.send({ status: 200});
+        res.send({status: 200});
 
     } catch (e) {
-        if(axios.isAxiosError(e)) {
+        if (axios.isAxiosError(e)) {
             console.error(e.response.data)
             res.send(e.response.data);
             return;
