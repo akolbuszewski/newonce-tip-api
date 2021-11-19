@@ -3,6 +3,7 @@ const {v4} = require('uuid');
 const axios = require("axios");
 const mongoist = require("mongoist");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 
 const uri = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@newonce.ksdr0.mongodb.net/Artists?retryWrites=true&w=majority`
@@ -16,7 +17,7 @@ if (!db) {
 // create application/json parser
 const jsonParser = bodyParser.json()
 
-
+app.use(cors());
 app.get('/api', (req, res) => {
     const path = `/api/item/${v4()}`;
     res.setHeader('Content-Type', 'text/html');
@@ -75,14 +76,20 @@ app.post('/api/donate', jsonParser, async (req, res) => {
         }
 
         const response = await axios.post('https://merch-prod.snd.payu.com/api/v2_1/orders', paymentObject, {headers: { Authorization: `Bearer ${access_token}`}});
-        //const resultUpdate = await db.Artists.update({name: artistObj.name}, {$inc: {donations: 1}}, {multi: true});
+        const resultUpdate = await db.Artists.update({_id: artistObj._id}, {$inc: {donations: 1}}, {multi: true});
+        console.log(resultUpdate);
 
-
-        res.send('ok');
+        res.send({ status: 200});
 
     } catch (e) {
-        console.error(e.response.data)
-        res.send(e);
+        if(axios.isAxiosError(e)) {
+            console.error(e.response.data)
+            res.send(e.response.data);
+            return;
+        }
+
+        console.error(e)
+        res.send(e.response.data);
     }
 })
 
