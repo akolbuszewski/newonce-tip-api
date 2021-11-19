@@ -22,7 +22,7 @@ app.get('/api', (req, res) => {
 
 app.get('/api/item/:slug', (req, res) => {
     const { slug } = req.params;
-    res.end([JSON.stringify(process.env), uri]);
+    res.end(JSON.stringify(process.env));
 });
 
 
