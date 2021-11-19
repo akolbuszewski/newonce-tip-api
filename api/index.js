@@ -95,7 +95,7 @@ app.get('/api/now-playing', async function (req, res) {
             return;
         }
         const artist = await db.Artists.findOne({name: response.data.artist});
-        res.send({...response.data, donateEnabled: !!artist});
+        res.send({...response.data, donateEnabled: !!artist, numberOfDonations: (artist && artist.donations) || 0});
     } catch (e) {
         res.status(500);
         res.send(e);
