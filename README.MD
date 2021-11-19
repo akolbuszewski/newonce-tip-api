@@ -1,8 +1,8 @@
 #Newonce tip
 
 ###how to run 
-`npm i` 
+login to vercel
 
-`npm start`
+run `npm run develop`
 
 ### app should listen on port 3000
