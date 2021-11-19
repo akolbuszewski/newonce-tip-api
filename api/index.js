@@ -2,6 +2,7 @@ const app = require('express')();
 const { v4 } = require('uuid');
 const axios = require("axios");
 const mongoist = require("mongoist");
+const bodyParser = require("body-parser");
 
 
 const uri = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@newonce.ksdr0.mongodb.net/Artists?retryWrites=true&w=majority`
@@ -12,6 +13,10 @@ if (!db) {
     console.log('znowu');
     db = global.mongo =  mongoist(uri);
 }
+
+// create application/json parser
+const jsonParser = bodyParser.json()
+
 
 app.get('/api', (req, res) => {
     const path = `/api/item/${v4()}`;
@@ -25,6 +30,20 @@ app.get('/api/item/:slug', (req, res) => {
     res.end(JSON.stringify(process.env));
 });
 
+
+app.post('/api/donate', jsonParser, (req,res) => {
+    try {
+        const {blikCode, artist, amount} = req.body;
+        if(!blikCode | !artist | !amount){
+            res.status(422);
+            res.send('invalid parameters');
+            return;
+        }
+        res.send('ok');
+    } catch (e) {
+        console.error(e)
+    }
+})
 
 /* GET users listing. */
 app.get('/api/now-playing', async function(req, res) {
