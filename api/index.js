@@ -32,10 +32,7 @@ app.post('/api/donate', jsonParser, async (req, res) => {
         const {blikCode, artist, amount} = req.body;
 
         const artistObj = await db.Artists.findOne({name: artist});
-        if (!artistObj) {
-            res.send('artist not donated');
-            return;
-        }
+
 
         if (!blikCode | !artist | !amount) {
             res.status(422);
@@ -49,7 +46,7 @@ app.post('/api/donate', jsonParser, async (req, res) => {
         const paymentObject = {
             "currencyCode": "PLN",
             "totalAmount": amount,
-            "description": `Donation for ${artist.name}`,
+            "description": `Donation for ${artist}`,
             "notifyUrl": "http://test.merch.notifyUrl",
             "customerIp": ip,
             "merchantPosId": "426017",
@@ -70,8 +67,12 @@ app.post('/api/donate', jsonParser, async (req, res) => {
         }
 
         const response = await axios.post('https://merch-prod.snd.payu.com/api/v2_1/orders', paymentObject, {headers: {Authorization: `Bearer ${access_token}`}});
-        const resultUpdate = await db.Artists.update({_id: artistObj._id}, {$inc: {donations: 1}}, {multi: true});
-        console.log(resultUpdate);
+        if (!artistObj) {
+            await db.Artists.insert({name: artist, donations: 1})
+            return;
+        } else {
+            await db.Artists.update({_id: artistObj._id}, {$inc: {donations: 1}}, {multi: true});
+        }
 
         res.send({status: 200});
 
@@ -96,7 +97,7 @@ app.get('/api/now-playing', async function (req, res) {
             return;
         }
         const artist = await db.Artists.findOne({name: response.data.artist});
-        res.send({...response.data, donateEnabled: !!artist, numberOfDonations: (artist && artist.donations) || 0});
+        res.send({...response.data, numberOfDonations: (artist && artist.donations) || 0});
     } catch (e) {
         res.status(500);
         res.send(e);
