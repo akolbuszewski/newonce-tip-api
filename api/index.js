@@ -21,7 +21,7 @@ app.get('/api/item/:slug', (req, res) => {
 
 
 /* GET users listing. */
-app.get('/now-playing', async function(req, res) {
+app.get('/api/now-playing', async function(req, res) {
     try {
         const response = await axios.get('https://www.newonce.net/api/radio_now_playing');
         if (!response.data.artist) {
