@@ -5,7 +5,13 @@ const mongoist = require("mongoist");
 
 
 const uri = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@newonce.ksdr0.mongodb.net/Artists?retryWrites=true&w=majority`
-const db =  mongoist(uri);
+
+let db = global.mongo
+
+if (!db) {
+    console.log('znowu');
+    db = global.mongo =  mongoist(uri);
+}
 
 app.get('/api', (req, res) => {
     const path = `/api/item/${v4()}`;
@@ -24,6 +30,7 @@ app.get('/api/item/:slug', (req, res) => {
 app.get('/api/now-playing', async function(req, res) {
     try {
         const response = await axios.get('https://www.newonce.net/api/radio_now_playing');
+        console.log(uri);
         if (!response.data.artist) {
             res.send(response.data);
             return;

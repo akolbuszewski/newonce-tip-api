@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "develop": "vercel dev"
   },
   "dependencies": {
     "axios": "^0.24.0",
@@ -14,6 +15,7 @@
     "jade": "~1.11.0",
     "mongoist": "^2.5.3",
     "morgan": "~1.9.1",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "vercel": "^23.1.2"
   }
 }
