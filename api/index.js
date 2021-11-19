@@ -69,7 +69,6 @@ app.post('/api/donate', jsonParser, async (req, res) => {
         const response = await axios.post('https://merch-prod.snd.payu.com/api/v2_1/orders', paymentObject, {headers: {Authorization: `Bearer ${access_token}`}});
         if (!artistObj) {
             await db.Artists.insert({name: artist, donations: 1})
-            return;
         } else {
             await db.Artists.update({_id: artistObj._id}, {$inc: {donations: 1}}, {multi: true});
         }
