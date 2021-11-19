@@ -1,6 +1,7 @@
 const app = require('express')();
 const { v4 } = require('uuid');
 const axios = require("axios");
+const mongoist = require("mongoist");
 
 
 const uri = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@newonce.ksdr0.mongodb.net/Artists?retryWrites=true&w=majority`
